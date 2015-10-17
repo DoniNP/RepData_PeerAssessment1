@@ -10,14 +10,14 @@ keep_md: true
 
 
 There are 2 libraries that I used in this analysis:
-```{r}
+```{r, echo=TRUE}
 ## Include Library
 library(ggplot2)
 library(knitr)
 ```
 
 As the package came in .zip format, I put a code to unzip it, and eventually reading the data and put it in a dataframe.
-```{r}
+```{r, echo=TRUE}
 ## Unzip File
 unzip ("activity.zip", exdir = "./")
 
@@ -33,7 +33,7 @@ data_activity <- data_activity[complete.cases(data_activity),]
 ## What is mean total number of steps taken per day?
 
 In order to Calculate the total number of steps taken per day, I used the aggregate function.
-```{r}
+```{r, echo=TRUE}
 data_agg <- aggregate(data_activity$steps, by = list(data_activity$date), sum)
 names(data_agg) <- c("date", "steps")
 head(data_agg)
@@ -41,12 +41,12 @@ head(data_agg)
 
 
 Then I plot a histogram here:
-```{r}
+```{r, echo=TRUE}
 hist(data_agg$steps, xlab = "Number of Steps", main = "Total Number of Steps Per Day")
 ```
 
 By using summary() as shown below:
-```{r}
+```{r, echo=TRUE}
 summary(data_agg)
 ```
 We get that the median is 10765 and the mean is 10766.
@@ -55,13 +55,13 @@ We get that the median is 10765 and the mean is 10766.
 ## What is the average daily activity pattern?
 
 I made a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis).
-```{r}
+```{r, echo=TRUE}
 interval_agg <- aggregate(steps ~ interval, data_activity, mean)
 plot(interval_agg$interval, interval_agg$steps, type='l', main="All-day Average Steps", xlab="Interval", ylab="Average number of steps")
 ```
 
 In order to figure out which interval has the most step, I called the row index where the most step value lies.
-```{r}
+```{r, echo=TRUE}
 interval_agg[which.max(interval_agg$steps),]
 ```
 We can see that interval 835 has the maximum number of steps.
@@ -71,14 +71,14 @@ We can see that interval 835 has the maximum number of steps.
 The presence of missing days may introduce bias into some calculations or summaries of the data.
 
 By running the code here:
-```{r}
+```{r, echo=TRUE}
 imputed <- read.csv("activity.csv")
 sum(!complete.cases(imputed))
 ```
 We get that there are 2304 incomplete cases.
 
 To complete the data, I used the mean for that 5-minute interval to replace the missing values with the following code:
-```{r}
+```{r, echo=TRUE}
 for (i in 1:nrow(imputed)){
     if (is.na(imputed$steps[i])) {
         take_interval <- imputed$interval[i]
@@ -90,7 +90,7 @@ for (i in 1:nrow(imputed)){
 It worked by scanning the whole dataframe, detecting missing values, and replacing them with the mean of the same interval from the other data.
 
 To find the mean and the median of the imputed data frame, I used the code similar to the first draw:
-```{r}
+```{r, echo=TRUE}
 ## Start by aggregating
 imputed_agg <- aggregate(imputed$steps, by = list(imputed$date), sum)
 names(imputed_agg) <- c("date", "steps")
@@ -107,7 +107,7 @@ The first data has mean and median of 10765 and 10766, respectively, while the i
 ## Are there differences in activity patterns between weekdays and weekends?
 
 To answer this question, we must first make the factor to distinguish which data belongs to weekday or weekend.
-```{r}
+```{r, echo=TRUE}
 ## Starting by adding additional column for flag
 imputed['Type'] <- weekdays(as.Date(imputed$date))
 imputed$Type[imputed$Type  %in% c('Saturday','Sunday') ] <- "weekend"
