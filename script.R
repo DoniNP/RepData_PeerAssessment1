@@ -58,3 +58,5 @@ imputed$Type <- as.factor(imputed$Type)
 imputed_type_agg <- aggregate(steps ~ interval + Type, imputed, mean)
 
 qplot(data = imputed_type_agg, interval, steps, type = 'l', geom=c("line"), xlab = "Interval", ylab = "Number of steps", main = "") + facet_wrap(~ Type, ncol = 1)
+
+knit2html("PA1_template.Rmd")
